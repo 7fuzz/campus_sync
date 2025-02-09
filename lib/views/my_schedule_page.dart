@@ -5,6 +5,12 @@ class MySchedulePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("My Schedule Page"));
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Schedule'),
+        centerTitle: true,
+        backgroundColor: Colors.green[400],
+      ),
+    );
   }
 }

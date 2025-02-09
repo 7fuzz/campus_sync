@@ -5,6 +5,12 @@ class CourseSchedulePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Course Schedule Page"));
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Course Schedule'),
+        centerTitle: true,
+        backgroundColor: Colors.green[400],
+      ),
+    );
   }
 }

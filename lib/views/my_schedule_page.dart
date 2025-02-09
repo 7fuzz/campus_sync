@@ -28,6 +28,7 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Jadwal Hari Ini"),
+        centerTitle: true,
         backgroundColor: Colors.green[400],
       ),
       backgroundColor: Colors.green[50],

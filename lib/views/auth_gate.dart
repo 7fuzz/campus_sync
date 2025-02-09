@@ -13,9 +13,9 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
-            return const HomeScreen(); // User is logged in
+            return const HomeScreen(); // User sudah login langsung ke homescreen
           } else {
-            return const LoginScreen(); // User is not logged in
+            return const LoginScreen(); // User belum login pergi ke halaman login
           }
         }
         return const Center(child: CircularProgressIndicator()); // Loading state

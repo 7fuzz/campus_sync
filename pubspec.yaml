@@ -11,6 +11,9 @@ dependencies:
     sdk: flutter
   firebase_auth: ^5.4.2
   firebase_core: ^3.11.0
+  cloud_firestore: ^5.6.3
+  supabase_flutter: ^2.8.3
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +22,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/default_avatar.png

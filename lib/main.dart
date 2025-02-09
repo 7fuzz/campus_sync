@@ -1,4 +1,6 @@
 import 'package:campus_sync/views/auth_gate.dart';
+import 'package:campus_sync/views/home_screen.dart';
+import 'package:campus_sync/views/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +15,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthGate(), // Decides whether to show login or home screen
+      home: const AuthGate(), // Cek jika sudah login, langsung masuk ke aplikasi
+      routes: {
+        '/home': (context) => const HomeScreen(), 
+        '/login': (context) => const LoginScreen(),
+      },
     );
   }
 }

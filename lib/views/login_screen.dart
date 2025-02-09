@@ -1,3 +1,4 @@
+import 'package:campus_sync/views/register_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
@@ -52,6 +53,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               onPressed: loginUser,
               child: const Text("Login"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                );
+              },
+              child: const Text("Belum punya akun? Daftar disini!"),
             ),
           ],
         ),

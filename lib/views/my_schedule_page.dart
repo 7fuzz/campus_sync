@@ -2,21 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.green),
-      home: JadwalHariIniScreen(),
-    );
-  }
-}
-
 class JadwalHariIniScreen extends StatefulWidget {
   @override
   _JadwalHariIniScreenState createState() => _JadwalHariIniScreenState();
@@ -34,13 +19,7 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
       backgroundColor: Colors.green[50],
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: buildJadwalHariIni(),
-            ),
-          ],
-        ),
+        child: buildJadwalHariIni(),
       ),
     );
   }
@@ -50,50 +29,62 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
     String todayStr = DateFormat('yyyy-MM-dd').format(today);
 
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('dosens').snapshots(),
+      stream: FirebaseFirestore.instance.collection('dosen').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
 
-        var filteredDocs = snapshot.data!.docs.where((doc) {
-          var matakuliahList = (doc['matakuliah'] as List<dynamic>);
-          return matakuliahList.any((matakuliahData) {
-            Timestamp tanggalMulai = matakuliahData['tanggalmulai'];
-            String tanggalMulaiStr =
-                DateFormat('yyyy-MM-dd').format(tanggalMulai.toDate());
-            return tanggalMulaiStr == todayStr;
-          });
-        }).toList();
+        var dosenDocs = snapshot.data!.docs;
 
-        return ListView.builder(
-          itemCount: filteredDocs.length,
-          itemBuilder: (context, index) {
-            var dosenData = filteredDocs[index];
-            return Column(
-              children: (dosenData['matakuliah'] as List<dynamic>)
-                  .where((matakuliahData) {
-                    Timestamp tanggalMulai = matakuliahData['tanggalmulai'];
-                    String tanggalMulaiStr =
-                        DateFormat('yyyy-MM-dd').format(tanggalMulai.toDate());
-                    return tanggalMulaiStr ==
-                        DateFormat('yyyy-MM-dd').format(DateTime.now());
-                  })
-                  .map<Widget>((matakuliahData) =>
-                      buildmatakuliahCard(matakuliahData, dosenData['nama']))
-                  .toList(),
-            );
-          },
-        );
+        List<Widget> jadwalHariIni = [];
+
+        for (var dosen in dosenDocs) {
+          var mataKuliahList = dosen['mataKuliah'] as List<dynamic>? ?? [];
+
+          for (var mataKuliah in mataKuliahList) {
+            var pertemuanList = mataKuliah['pertemuan'] as List<dynamic>? ?? [];
+
+            for (var pertemuan in pertemuanList) {
+              Timestamp? tanggalMulai = pertemuan['tanggalMulai'];
+              Timestamp? tanggalSelesai = pertemuan['tanggalSelesai'];
+
+              if (tanggalMulai != null) {
+                String tanggalMulaiStr =
+                    DateFormat('yyyy-MM-dd').format(tanggalMulai.toDate());
+
+                if (tanggalMulaiStr == todayStr) {
+                  jadwalHariIni.add(buildMataKuliahCard(
+                    mataKuliah['nama'] ?? "(Tanpa Nama)",
+                    tanggalMulai.toDate(),
+                    tanggalSelesai?.toDate(),
+                    mataKuliah['ruangan'] ?? "-",
+                    dosen['nama'] ?? "(Tanpa Nama Dosen)",
+                  ));
+                }
+              }
+            }
+          }
+        }
+
+        return jadwalHariIni.isNotEmpty
+            ? ListView(children: jadwalHariIni)
+            : Center(child: Text("Tidak ada jadwal hari ini"));
       },
     );
   }
 
-  Widget buildmatakuliahCard(dynamic matakuliahData, String namaDosen) {
-    Timestamp tanggalMulai = matakuliahData['tanggalmulai'];
-    String formattedJam = DateFormat('HH:mm').format(tanggalMulai.toDate());
-    String ruangan = matakuliahData['ruangan'] ?? "-";
-    String namamatakuliah = matakuliahData['nama'];
+  Widget buildMataKuliahCard(
+    String namaMataKuliah,
+    DateTime tanggalMulai,
+    DateTime? tanggalSelesai,
+    String ruangan,
+    String namaDosen,
+  ) {
+    String jamMulai = DateFormat('HH:mm').format(tanggalMulai);
+    String jamSelesai = tanggalSelesai != null
+        ? DateFormat('HH:mm').format(tanggalSelesai)
+        : "";
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -108,7 +99,7 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              namamatakuliah,
+              namaMataKuliah,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -120,7 +111,8 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Jam: $formattedJam", style: TextStyle(fontSize: 16)),
+                Text("Jam: $jamMulai - $jamSelesai",
+                    style: TextStyle(fontSize: 16)),
                 Text("Ruangan: $ruangan", style: TextStyle(fontSize: 16)),
               ],
             ),

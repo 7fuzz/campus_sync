@@ -1,3 +1,4 @@
+import 'package:campus_sync/seeder/dummydatamatkul.dart';
 import 'package:campus_sync/views/auth_gate.dart';
 import 'package:campus_sync/views/home_screen.dart';
 import 'package:campus_sync/views/login_screen.dart';
@@ -17,9 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const AuthGate(), // Cek jika sudah login, langsung masuk ke aplikasi
+      home:
+          const AuthGate(), // Cek jika sudah login, langsung masuk ke aplikasi
       routes: {
-        '/home': (context) => const HomeScreen(), 
+        '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginScreen(),
       },
     );

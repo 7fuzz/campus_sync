@@ -56,7 +56,7 @@ class _JadwalmatakuliahScreenState extends State<JadwalmatakuliahScreen> {
 
   Widget buildDosenList() {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('dosens').snapshots(),
+      stream: FirebaseFirestore.instance.collection('dosen').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -64,10 +64,10 @@ class _JadwalmatakuliahScreenState extends State<JadwalmatakuliahScreen> {
 
         var filteredDocs = snapshot.data!.docs.where((doc) {
           var namaDosen = doc['nama'].toLowerCase();
-          var matakuliahList = (doc['matakuliah'] as List<dynamic>);
-          bool matakuliahMatch = matakuliahList.any((matakuliahData) =>
-              matakuliahData['nama'].toLowerCase().contains(searchQuery));
-          return namaDosen.contains(searchQuery) || matakuliahMatch;
+          var mataKuliahList = (doc['mataKuliah'] as List<dynamic>);
+          bool mataKuliahMatch = mataKuliahList.any((mataKuliahData) =>
+              mataKuliahData['nama'].toLowerCase().contains(searchQuery));
+          return namaDosen.contains(searchQuery) || mataKuliahMatch;
         }).toList();
 
         return ListView.builder(
@@ -104,9 +104,9 @@ class _JadwalmatakuliahScreenState extends State<JadwalmatakuliahScreen> {
             ),
             Divider(color: Colors.black),
             Column(
-              children: (dosenData['matakuliah'] as List<dynamic>)
+              children: (dosenData['mataKuliah'] as List<dynamic>)
                   .map<Widget>(
-                      (matakuliahData) => buildmatakuliahTile(matakuliahData))
+                      (mataKuliahData) => buildMataKuliahTile(mataKuliahData))
                   .toList(),
             )
           ],
@@ -115,13 +115,24 @@ class _JadwalmatakuliahScreenState extends State<JadwalmatakuliahScreen> {
     );
   }
 
-  Widget buildmatakuliahTile(dynamic matakuliahData) {
-    Timestamp tanggalMulai = matakuliahData['tanggalmulai'];
-    Timestamp tanggalSelesai = matakuliahData['tanggalselesai'];
-    String formattedMulai =
-        DateFormat('dd MMM yyyy, HH:mm').format(tanggalMulai.toDate());
-    String formattedSelesai =
-        DateFormat('dd MMM yyyy, HH:mm').format(tanggalSelesai.toDate());
+  Widget buildMataKuliahTile(dynamic mataKuliahData) {
+    Set<String> uniqueTimes = {};
+    List<Widget> timeWidgets = [];
+
+    for (var pertemuanData in (mataKuliahData['pertemuan'] as List<dynamic>)) {
+      Timestamp tanggalMulai = pertemuanData['tanggalMulai'];
+      Timestamp tanggalSelesai = pertemuanData['tanggalSelesai'];
+      String formattedMulai = DateFormat('HH:mm').format(tanggalMulai.toDate());
+      String formattedSelesai =
+          DateFormat('HH:mm').format(tanggalSelesai.toDate());
+      String timeRange = "$formattedMulai - $formattedSelesai";
+
+      if (!uniqueTimes.contains(timeRange)) {
+        uniqueTimes.add(timeRange);
+        timeWidgets
+            .add(Text(timeRange, style: TextStyle(color: Colors.grey[700])));
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -140,11 +151,13 @@ class _JadwalmatakuliahScreenState extends State<JadwalmatakuliahScreen> {
         ),
         child: ListTile(
           title: Text(
-            matakuliahData['nama'],
+            mataKuliahData['nama'],
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          subtitle: Text("Mulai: $formattedMulai\nSelesai: $formattedSelesai",
-              style: TextStyle(color: Colors.grey[700])),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: timeWidgets,
+          ),
           leading: Icon(Icons.book, color: Colors.green[700]),
         ),
       ),

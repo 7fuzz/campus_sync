@@ -17,8 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const HomePage(),
-     JadwalHariIniScreen(),
-     JadwalmatakuliahScreen(),
+    JadwalHariIniScreen(),
+    JadwalmatakuliahScreen(),
     const CampusActivityPage(),
     const ProfilePage(),
   ];
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.green[400], // Color for selected item
         unselectedItemColor: Colors.grey, // Color for unselected items
         items: const [

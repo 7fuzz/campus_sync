@@ -17,8 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const MySchedulePage(),
-    const CourseSchedulePage(),
+     JadwalHariIniScreen(),
+     JadwalmatakuliahScreen(),
     const CampusActivityPage(),
     const ProfilePage(),
   ];

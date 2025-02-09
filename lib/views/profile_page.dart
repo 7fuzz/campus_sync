@@ -34,9 +34,9 @@ class _ProfilePageState extends State<ProfilePage> {
       if (userDoc.exists) {
         Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
         setState(() {
-          name = data['name'] ?? "Tanpa Nama (╬ಠ益ಠ)";
+          name = data['name'] ?? "Tanpa Nama";
           email = user!.email ?? "";
-          bio = data['bio'] ?? "Biodata Kosong (ノಠ益ಠ)ノ彡┻━┻";
+          bio = data['bio'] ?? "Belum ada biodata.";
         });
       }
     }
@@ -50,36 +50,85 @@ class _ProfilePageState extends State<ProfilePage> {
   void _editProfile() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => EditProfilePage()),
+      MaterialPageRoute(builder: (context) => const EditProfilePage()),
     ).then((_) => _getUserData());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Halaman Profil")),
+      backgroundColor: Colors.green[50],
+      appBar: AppBar(
+        title: const Text("My Profile"),
+        centerTitle: true,
+        backgroundColor: Colors.green[400],
+        elevation: 0,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Nama: $name", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text("Email: $email", style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text("Bio: $bio", style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
+            
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundImage: AssetImage('assets/profile_placeholder.png'),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      name,
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      email,
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
+
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              elevation: 3,
+              child: ListTile(
+                leading: const Icon(Icons.info_outline, color: Colors.green),
+                title: const Text("Bio"),
+                subtitle: Text(bio),
+              ),
+            ),
+            const SizedBox(height: 20),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: _editProfile,
-                  child: const Text("Edit Profil"),
+                  icon: const Icon(Icons.edit, color: Colors.white),
+                  label: const Text("Edit Profil"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: _logout,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text("Logout", style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.exit_to_app, color: Colors.white),
+                  label: const Text("Logout"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
               ],
             ),

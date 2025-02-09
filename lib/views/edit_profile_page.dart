@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({super.key});
+
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
@@ -22,9 +24,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? newProfilePic;
 
   final SupabaseClient supabase = SupabaseClient(
-    "https://vapegcaahfkcvynmqtku.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhcGVnY2FhaGZrY3Z5bm1xdGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkwNjUyOTcsImV4cCI6MjA1NDY0MTI5N30.xoyPWA6cV4II4sbHYLzpA2S7tuS0Qm3XwczyK9fO2lw"
-  );
+      "https://vapegcaahfkcvynmqtku.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...");
 
   @override
   void initState() {
@@ -79,8 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: const Text("Profil berhasil disimpan!"))
-      );
+          const SnackBar(content: Text("Profile berhasil disimpan!")));
 
       Navigator.pop(context);
     }
@@ -89,40 +89,97 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Profile")),
-      body: Padding(
+      backgroundColor: Colors.green[50], // Warna latar belakang lembut
+      appBar: AppBar(
+        title: const Text("Edit Profile"),
+        backgroundColor: Colors.green[400],
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Foto Profil
             GestureDetector(
               onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: newProfilePic != null
-                    ? FileImage(newProfilePic!)
-                    : (profilePicUrl != null
-                        ? NetworkImage(profilePicUrl!) as ImageProvider
-                        : const AssetImage("assets/default_avatar.png")),
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: newProfilePic != null
+                        ? FileImage(newProfilePic!)
+                        : (profilePicUrl != null
+                            ? NetworkImage(profilePicUrl!) as ImageProvider
+                            : const AssetImage("assets/default_avatar.png")),
+                  ),
+                  const CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.white,
+                    child:
+                        Icon(Icons.camera_alt, color: Colors.green, size: 20),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 10),
-            const Text("Ganti foto profil"),
+            const Text(
+              "Ubah Foto Profil",
+              style: TextStyle(fontSize: 14, color: Colors.green),
+            ),
             const SizedBox(height: 20),
+
+            // Input Nama
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: "Nama"),
+              decoration: InputDecoration(
+                labelText: "Nama",
+                prefixIcon: const Icon(Icons.person, color: Colors.green),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
+
+            // Input Biodata
             TextField(
               controller: bioController,
-              decoration: const InputDecoration(labelText: "Biodata"),
+              decoration: InputDecoration(
+                labelText: "Biodata",
+                prefixIcon: const Icon(Icons.info, color: Colors.green),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveProfile,
-              child: const Text("Simpan Profile")
-            )
+            const SizedBox(height: 12),
+
+            // Tombol Simpan
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _saveProfile,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[400],
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  "Simpan Perubahan",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),

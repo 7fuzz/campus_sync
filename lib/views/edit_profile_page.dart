@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -13,19 +13,19 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
 
-  firebase_auth.User? user;
+  User? user;
   TextEditingController nameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   String? profilePicUrl;
   File? newProfilePic;
 
-  final SupabaseClient supabase = SupabaseClient(
+  final supabase_flutter.SupabaseClient supabase = supabase_flutter.SupabaseClient(
       "https://vapegcaahfkcvynmqtku.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...");
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhcGVnY2FhaGZrY3Z5bm1xdGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkwNjUyOTcsImV4cCI6MjA1NDY0MTI5N30.xoyPWA6cV4II4sbHYLzpA2S7tuS0Qm3XwczyK9fO2lw");
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     String path = "profile_pics/${user!.uid}.jpg";
     await supabase.storage.from("profile_pics").upload(path, newProfilePic!,
-        fileOptions: const FileOptions(upsert: true));
+        fileOptions: const supabase_flutter.FileOptions(upsert: true));
 
     return supabase.storage.from("profile_pics").getPublicUrl(path);
   }

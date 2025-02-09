@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -11,13 +12,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  User? user;
+  final SupabaseClient supabase = SupabaseClient(
+      "https://vapegcaahfkcvynmqtku.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhcGVnY2FhaGZrY3Z5bm1xdGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkwNjUyOTcsImV4cCI6MjA1NDY0MTI5N30.xoyPWA6cV4II4sbHYLzpA2S7tuS0Qm3XwczyK9fO2lw");
+
+  firebase_auth.User? user;
   String name = "Loading...";
   String email = "";
   String bio = "";
+  String? profilePicUrl;
 
   @override
   void initState() {
@@ -37,6 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
           name = data['name'] ?? "Tanpa Nama";
           email = user!.email ?? "";
           bio = data['bio'] ?? "Belum ada biodata.";
+          profilePicUrl = data['profilePicUrl'];
         });
       }
     }
@@ -76,9 +83,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('assets/profile_placeholder.png'),
+                      backgroundImage: profilePicUrl != null
+                            ? NetworkImage(profilePicUrl!) as ImageProvider
+                            : const AssetImage("assets/default_avatar.png"),
                     ),
                     const SizedBox(height: 10),
                     Text(

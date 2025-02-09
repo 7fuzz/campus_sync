@@ -1,4 +1,3 @@
-import 'package:campus_sync/seeder/dummydatamatkul.dart';
 import 'package:campus_sync/views/auth_gate.dart';
 import 'package:campus_sync/views/home_screen.dart';
 import 'package:campus_sync/views/login_screen.dart';

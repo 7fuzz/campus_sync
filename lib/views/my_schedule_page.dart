@@ -32,7 +32,7 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
       stream: FirebaseFirestore.instance.collection('dosen').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         var dosenDocs = snapshot.data!.docs;
